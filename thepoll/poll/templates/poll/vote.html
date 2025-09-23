@@ -1,0 +1,18 @@
+from django.shortcuts import get_object_or_404, render, redirect
+from django.http import HttpResponse
+from .models import Poll, Choice
+
+def vote(request, poll_id):
+poll = get_object_or_404(Poll, pk=poll_id)
+try:
+selected_choice = poll.choice_set.get(pk=request.POST['choice'])
+except (KeyError, Choice.DoesNotExist):
+# redisplay with error
+return render(request, 'poll/detail.html', {
+'poll': poll,
+'error_message': "You didn't select a choice.",
+})
+else:
+selected_choice.votes += 1
+selected_choice.save()
+return redirect('poll_results', poll_id=poll.id)
