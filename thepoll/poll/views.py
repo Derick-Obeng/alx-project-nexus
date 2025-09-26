@@ -9,8 +9,7 @@ from django.urls import reverse
 def poll_list(request):
     polls = Poll.objects.order_by('-pub_date')
     return render(request, 'poll/index.html', {'polls': polls})
-    latest_poll_list = Poll.objects.order_by('-pub_date')[:5]
-    return render(request, 'poll/index.html', {'latest_poll_list': latest_poll_list})
+    
 
 def poll_detail(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
@@ -19,19 +18,28 @@ def poll_detail(request, poll_id):
 
 def vote(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
-    choice_id = request.POST.get('choice')
 
-    if not choice_id:
-        return render(request, 'poll/detail.html', {
-            'poll': poll,
-            'error_message': "You didn't select a choice.",
-        })
+    # Handle POST (user submitting a vote)
+    if request.method == "POST":
+        choice_id = request.POST.get("choice")
 
-    selected_choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
-    selected_choice.votes = F('votes') + 1
-    selected_choice.save()
+        if not choice_id:
+            # only show error if POST but no choice selected
+            return render(request, "poll/detail.html", {
+                "poll": poll,
+                "error_message": "You didn't select a choice.",
+            })
 
-    return redirect('poll_results', poll_id=poll.id)
+        selected_choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
+        selected_choice.votes = F("votes") + 1
+        selected_choice.save()
+
+        return redirect("poll:results", poll_id=poll.id)
+    
+        # Handle GET (just viewing the poll page — no error shown)
+
+    return render(request, "poll/detail.html", {"poll": poll})
+
     
 def poll_results(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)

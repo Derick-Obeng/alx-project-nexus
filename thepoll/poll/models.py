@@ -13,7 +13,7 @@ class User(models.Model):
       
 
 class Poll(models.Model):
-    volting_types = models.CharField(max_length=50)
+    voting_type = models.CharField(max_length=50)
     description = models.CharField(max_length=50, default="Who are you voting for?")
     pub_date = models.DateTimeField('date published')
 
