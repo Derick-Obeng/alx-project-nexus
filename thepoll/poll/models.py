@@ -22,7 +22,7 @@ class Poll(models.Model):
         return self.choice_set.aggregate(total=Sum('votes'))['total'] or 0
 
     def __str__(self):
-        return self.volting_types
+        return self.voting_type
 
 
 class Choice(models.Model):
