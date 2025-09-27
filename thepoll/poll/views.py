@@ -3,6 +3,11 @@ from django.shortcuts import redirect,render, get_object_or_404
 from django.db.models import F
 from .models import Poll , Choice
 from django.urls import reverse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 
 
@@ -10,11 +15,24 @@ def poll_list(request):
     polls = Poll.objects.order_by('-pub_date')
     return render(request, 'poll/index.html', {'polls': polls})
     
+# @swagger_auto_schema(
+#     method='get',
+#     operation_description="Get list of polls",
+#     responses={200: openapi.Response('Success')}
+# )
+# @api_view(['GET'])
+# def poll_list(request):
+#     # eventually you’ll fetch Poll objects from DB
+#     return Response({"message": "List of polls"})
+    
+
+
 
 def poll_detail(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = Choice.objects.filter(poll=poll)
     return render(request, 'poll/detail.html', {'poll': poll, 'choices': choices})
+
 
 def vote(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
@@ -40,7 +58,7 @@ def vote(request, poll_id):
 
     return render(request, "poll/detail.html", {"poll": poll})
 
-    
+
 def poll_results(request, poll_id):
     poll = get_object_or_404(Poll, pk=poll_id)
     choices = poll.choice_set.all()
