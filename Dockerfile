@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /app/thepoll
 
 # Install system deps
 RUN apt-get update && apt-get install -y \
