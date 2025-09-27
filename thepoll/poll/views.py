@@ -1,0 +1,77 @@
+from django.http import HttpResponse
+from django.shortcuts import redirect,render, get_object_or_404
+from django.db.models import F
+from .models import Poll , Choice
+from django.urls import reverse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+
+
+
+def poll_list(request):
+    polls = Poll.objects.order_by('-pub_date')
+    return render(request, 'poll/index.html', {'polls': polls})
+    
+# @swagger_auto_schema(
+#     method='get',
+#     operation_description="Get list of polls",
+#     responses={200: openapi.Response('Success')}
+# )
+# @api_view(['GET'])
+# def poll_list(request):
+#     # eventually you’ll fetch Poll objects from DB
+#     return Response({"message": "List of polls"})
+    
+
+
+
+def poll_detail(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choices = Choice.objects.filter(poll=poll)
+    return render(request, 'poll/detail.html', {'poll': poll, 'choices': choices})
+
+
+def vote(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+
+    # Handle POST (user submitting a vote)
+    if request.method == "POST":
+        choice_id = request.POST.get("choice")
+
+        if not choice_id:
+            # only show error if POST but no choice selected
+            return render(request, "poll/detail.html", {
+                "poll": poll,
+                "error_message": "You didn't select a choice.",
+            })
+
+        selected_choice = get_object_or_404(Choice, pk=choice_id, poll=poll)
+        selected_choice.votes = F("votes") + 1
+        selected_choice.save()
+
+        return redirect("poll:results", poll_id=poll.id)
+    
+        # Handle GET (just viewing the poll page — no error shown)
+
+    return render(request, "poll/detail.html", {"poll": poll})
+
+
+def poll_results(request, poll_id):
+    poll = get_object_or_404(Poll, pk=poll_id)
+    choices = poll.choice_set.all()
+    total_votes = sum(c.votes for c in choices)
+
+    for c in choices:
+        if total_votes > 0:
+            c.percent = (c.votes / total_votes) * 100
+        else:
+            c.percent = 0
+
+    return render(request, 'poll/results.html', {
+        'poll': poll,
+        'choices': choices,
+        'total_votes': total_votes
+    })
