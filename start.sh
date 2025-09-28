@@ -10,4 +10,4 @@ echo "Collecting static files..."
 python3 thepoll/manage.py collectstatic --noinput
 
 echo "Starting Gunicorn..."
-gunicorn thepoll.wsgi:application --bind 0.0.0.0:$PORT
+gunicorn thepoll.thepoll.wsgi:application --bind 0.0.0.0:$PORT

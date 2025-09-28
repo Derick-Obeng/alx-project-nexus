@@ -16,6 +16,9 @@ COPY . .
 # Install Python deps
 RUN pip install --no-cache-dir -r requirements.txt
 
+ENV DJANGO_SETTINGS_MODULE=thepoll.thepoll.settings
+
+
 EXPOSE 8000
 
 RUN chmod +x start.sh
