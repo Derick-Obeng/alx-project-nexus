@@ -4,3 +4,4 @@ drf-yasg>=1.21
 gunicorn>=21.2
 python-decouple>=3.8  
 Pillow>=10.0.0
+    
