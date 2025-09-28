@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-export DJANGO_SETTINGS_MODULE=thepoll.settings
+export DJANGO_SETTINGS_MODULE=thepoll.thepoll.settings
 
 echo "Running migrations..."
 python3 thepoll/manage.py migrate --noinput
