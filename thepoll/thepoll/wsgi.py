@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'thepoll.thepoll.settings')
+from thepoll import thepoll
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'thepoll.settings')
+    
 application = get_wsgi_application()
