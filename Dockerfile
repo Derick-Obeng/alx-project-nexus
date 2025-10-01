@@ -5,7 +5,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # set working dir to the folder that contains manage.py
-WORKDIR /app/thepoll
+WORKDIR /app
 
 # system deps needed by Pillow / psycopg2 etc.
 RUN apt-get update && apt-get install -y \
